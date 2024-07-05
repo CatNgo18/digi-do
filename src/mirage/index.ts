@@ -205,8 +205,6 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Create user who owns previously created pets
             server.create("user", { pets })
-
-            console.log('hi')
         },
     });
 }
