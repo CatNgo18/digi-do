@@ -1,6 +1,6 @@
 import { createServer, Model, Factory, hasMany, belongsTo, Registry, Request } from 'miragejs';
 import { faker } from '@faker-js/faker';
-import { User, Pet, Task, TaskStatus } from '../fetchers';
+import { User, Pet, Task, TaskStatus } from '../types';
 import { FactoryDefinition, ModelDefinition } from 'miragejs/-types';
 import Schema from 'miragejs/orm/schema';
 

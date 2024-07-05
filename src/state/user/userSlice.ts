@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User, fetchUser } from '../../fetchers';
+import { fetchUser } from '../../fetchers';
 import GenericState from '../genericState';
 import { AppDispatch } from '../store';
+import { User } from '../../types';
 
-export const fetchUserById = createAsyncThunk<User, number, {dispatch: AppDispatch}>(
-    'user/fetchById',
+export const getUserById = createAsyncThunk<User, number, {dispatch: AppDispatch}>(
+    'user/getUserById',
     async (userId: number) => {
         const response = await fetchUser(
             `/api/users/` +
@@ -19,13 +20,13 @@ const userSlice = createSlice({
     initialState: {status: 'loading'} as GenericState<User>,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(fetchUserById.pending, (state: GenericState<User>) => {
+        builder.addCase(getUserById.pending, (state: GenericState<User>) => {
             state.status = 'loading';
             state.errorMessage = undefined;
-        }).addCase(fetchUserById.fulfilled, (state: GenericState<User>, action: PayloadAction<User>) => {
+        }).addCase(getUserById.fulfilled, (state: GenericState<User>, action: PayloadAction<User>) => {
             state.data = action.payload;
             state.status = 'finished';
-        }).addCase(fetchUserById.rejected, (state: GenericState<User>) => {
+        }).addCase(getUserById.rejected, (state: GenericState<User>) => {
             state.status = 'error';
             state.errorMessage = 'Error: Cannot find user';
         })
