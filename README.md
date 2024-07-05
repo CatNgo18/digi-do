@@ -35,9 +35,14 @@
   - [PUT: Task Uncomplete](#task-uncomplete)
   - [DELETE: Task Delete](#task-delete)
 
+#### [Upcoming Features](#upcoming-features)
+
 ## How to Run
 1. Open Terminal
-2. Run ```npm run dev```
+2. Navigate to ```digi-do``` folder
+3. Run ```npm i```
+4. Run ```npm run build```
+5. Run ```npm run dev```
 
 ## Code Challenge Requirements
 1. User can view a list of resources
@@ -88,7 +93,7 @@
       <th align="left" width="175">Description</th>
     </tr>
     <tr>
-      <td>Evolve</td>
+      <td>Evolve (Upcoming)</td>
       <td>
       - If a pet is happy, the pet will evolve into the next life stage </br>
       - If a pet is unhappy, the pet will not evolve, but will try again the next day </br>
@@ -114,7 +119,7 @@
       </td>
     </tr>
     <tr>
-      <td>Life Stage</td>
+      <td>Life Stage (Upcoming)</td>
       <td>
       - There are 4 life stages: baby, child, teen, and adult</br>
       - 3 days after beginning a new life stage, a pet will try to evolve</br>
@@ -133,7 +138,7 @@
       </td>
     </tr>
     <tr>
-      <td>Species</td>
+      <td>Species (Upcoming)</td>
       <td>
       - When your pet evolves, they will change into a species associated with the life stage they're evolving into</br>
       - What species your pet evolves into depends on how many tasks you've completed and your pet's happiness</br>
@@ -231,7 +236,7 @@
     <tr>
       <td>name</td>
       <td><code>VARCHAR(128)</code></td>
-      <td><code>NOT NULL</code></td>
+      <td></td>
     </tr>
     <tr></tr>
     <tr>
@@ -508,14 +513,6 @@ POST /users/{userId}/pets
 ```
 ##### API
 
-#### User Get Garden
-Given a <code>userId</code>, return a list of the user's pets (with non-detailed information) where <code>status == 'garden'</code>.
-##### Path
-```http
-GET /users/{userId}/garden
-```
-##### API
-
 ### Pets
 
 #### Pet Get By Pet Id
@@ -547,15 +544,6 @@ Given a <code>petId</code>, update the pet's information.
 ##### Path
 ```http
 PUT /pets/{petId}
-```
-##### API
-
-#### Pet Release Into Garden
-Given a <code>petId</code>, change its <code>status</code> to <code>garden</code>.
-</br>If a <code>retro</code> is present in the request body, update that as well.
-##### Path
-```http
-PUT /pets/{petID}/garden
 ```
 ##### API
 
@@ -593,22 +581,6 @@ PUT /tasks/{taskId}
 ```
 ##### API
 
-#### Task Complete
-Given a <code>taskId</code>, change the task's <code>status</code> to <code>complete</code>.
-##### Path
-```http
-PUT /tasks/{taskId}/complete
-```
-##### API
-
-#### Task Uncomplete
-Given a <code>taskId</code>, change the task's <code>status</code> to <code>incomplete</code>.
-##### Path
-```http
-PUT /tasks/{taskId}/uncomplete
-```
-##### API
-
 #### Task Delete
 Given a <code>taskId</code>, delete the task from the <code>digi_do.tasks</code> table.
 ##### Path
@@ -616,3 +588,9 @@ Given a <code>taskId</code>, delete the task from the <code>digi_do.tasks</code>
 DELETE /tasks/{taskId}
 ```
 ##### API
+
+## Upcoming Features
+- Evolution
+  - Pets will have 4 different life stages (baby, child, teen, adult)
+  - When pets evolve into a new life stage, they will evolve into different species depending on current happiness level and number of tasks completed.
+- User Authentication
