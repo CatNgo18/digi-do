@@ -30,23 +30,23 @@ export enum TaskStatus {
 };
 
 // API responses
-type UserResponse = {
+export type UserResponse = {
     user: User;
 };
 
-type PetResponse = {
+export type PetResponse = {
     pet: Pet;
 };
 
-type TaskResponse = {
+export type TaskResponse = {
     task: Task;
 };
 
-type PetsResponse = {
+export type PetsResponse = {
     pets: Pet[];
 };
 
-type TasksResponse = {
+export type TasksResponse = {
     tasks: Task[];
 };
 
