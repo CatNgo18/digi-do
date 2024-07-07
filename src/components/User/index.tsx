@@ -23,6 +23,7 @@ export default function User({ userId }: UserProps) {
                 return <p>Welcome, {user.data.name}!</p>
         // falls through to 'error'
         case 'error':
+            console.log(user.errorMessage);
             return <p>No user found.</p>
     }
     /* eslint-enable no-fallthrough */

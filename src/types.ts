@@ -31,7 +31,7 @@ export enum TaskStatus {
 
 export type ResourceList<T> = {
     data: T[];
-    focusId: number | undefined | null;
+    focusId: number | undefined;
 }
 
 // API responses

@@ -23,12 +23,11 @@ function App() {
       <h1>Vite + React</h1>
       <div className="card">
         <User userId={userId}/>
-        {pets.data && pets.data.data && pets.data.focusId ?
-          <Pet pet={pets.data.data.find((pet) => pet.id === pets.data?.focusId)}/>
+        {pets.data?.data && pets.data.focusId ?
+          <Pet/>
         :
           <Pets userId={userId}/>
         }
-        
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more

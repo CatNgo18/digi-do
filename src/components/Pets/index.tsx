@@ -23,17 +23,19 @@ export default function Pets({ userId }: PetsProps) {
           return (
             <div>
               {pets.data.data.map((pet, index) => 
-                <div key={index} onClick={() => {console.log('click'); dispatch(setFocusId(pet.id))}}>
+                <div key={index} onClick={() => dispatch(setFocusId(pet.id))}>
                   <p>Name: {pet?.name}</p>
                   <p>Title: {pet?.title}</p>
                   <p>Description: {pet?.description}</p>
                 </div>
               )}
+              <div>Create new pet</div>
             </div>
           )
         // falls through to 'error'
       case 'error':
-        return <p>No user found.</p>
+        console.log(pets.errorMessage);
+        return <p>No pets found.</p>
     }
     /* eslint-enable no-fallthrough */
   }

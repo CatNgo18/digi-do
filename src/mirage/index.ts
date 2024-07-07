@@ -93,7 +93,6 @@ export function makeServer({ environment = "test" }) { // expected environment v
             this.get('/users/:userId/pets', (schema: AppSchema, request: Request) => {
                 return schema.where("pet", {
                     userId: parseInt(request.params.userId),
-                    garden: request.queryParams.garden === "true",
                 });
             });
 
@@ -134,11 +133,11 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a petID, update the pet's information
             this.put('/pets/:petId', (schema: AppSchema, request: Request) => {
-                let attrs = JSON.parse(request.requestBody).pet;
+                let attrs = JSON.parse(request.requestBody);
 
                 schema.find("pet", request.params.petId)?.update(attrs);
 
-                return attrs;
+                return {pet: attrs};
             });
 
             // Given a petID, delete the pet from the table
