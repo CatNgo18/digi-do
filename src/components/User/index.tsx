@@ -1,30 +1,20 @@
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../state/hooks";
-import { getUserById } from "../../state/user/userSlice";
+import { useAppSelector } from "../../state/hooks"
 
-type UserProps = {
-    userId: number;
-}
+export default function User() {
+    const user = useAppSelector((state) => state.user);
 
-export default function User({ userId }: UserProps) {
-    const user = useAppSelector((state) => state.user) // Current user
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        dispatch(getUserById(userId))
-    }, [userId])
-
-    /* eslint-disable no-fallthrough */
     switch (user.status) {
         case 'loading':
-            return <p>Loading...</p>
+            return <p>Loading user...</p>
         case 'finished':
-            if (user.data)
-                return <p>Welcome, {user.data.name}!</p>
-        // falls through to 'error'
+            if (user.data) {
+                return <p>Hello, {user.data.name}</p>
+            } else {
+                console.log(user.errorMessage)
+                return <p>No user found.</p>
+            }
         case 'error':
-            console.log(user.errorMessage);
+            console.log(user.errorMessage)
             return <p>No user found.</p>
     }
-    /* eslint-enable no-fallthrough */
 }

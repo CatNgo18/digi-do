@@ -1,18 +1,18 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
-import { getPetsByUserId, setFocusId, updatePet } from "../../state/pets/petsSlice";
-import { Pet as PetType } from "../../types";
+import { getPetsByUserId } from "../../state/pets/petsSlice";
+import { updatePet, deletePet } from "../../state/pet/petSlice";
 
 export default function Pet() {
     const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.user);
     const pets = useAppSelector((state) => state.pets);
-    const pet: PetType | undefined = useAppSelector((state) => state.pets.data?.data.find((pet) => pet.id === state.pets.data?.focusId));
+    const pet = useAppSelector((state) => state.pet);
     const [editPet, setEditPet] = useState(false);
     const [formData, setFormData] = useState({
-        name: pet?.name || '',
-        title: pet?.title || '',
-        description: pet?.description || '',
+        name: pet.data?.name || '',
+        title: pet.data?.title || '',
+        description: pet.data?.description || '',
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -22,7 +22,7 @@ export default function Pet() {
 
     const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
-        await dispatch(updatePet(Object.assign({}, pet, formData)));
+        await dispatch(updatePet(Object.assign({}, pet.data, formData)));
 
         if (user.data?.id) {
             await dispatch(getPetsByUserId(user.data.id));
@@ -34,8 +34,13 @@ export default function Pet() {
                 console.log(pets.errorMessage)
         }
     }
+
+    const handleDeletePet = async () => {
+        if (pet.data?.id)
+            dispatch(deletePet(pet.data.id))
+    }
     
-    if (pet && editPet) {
+    if (pet.data && editPet) {
         return (
             <form onSubmit={handleSubmit}>
                 <label>Name: <input name="name" value={formData.name} onChange={handleChange}/></label>
@@ -46,24 +51,24 @@ export default function Pet() {
             </form>
         )
 
-    } else if (pet && pets) {
+    } else if (pet.data) {
         return (
             <div>
-                <p>Name: {pet.name ?? ''}</p>
-                <p>Title: {pet.title}</p>
-                <p>Description: {pet.description ?? ''}</p>
-                <p>Happiness: {pet.hp}/10</p>
-                {pet.garden &&
-                    <p>Retrospective: {pet.retro ?? ''}</p>
+                <p>Name: {pet.data.name ?? ''}</p>
+                <p>Title: {pet.data.title}</p>
+                <p>Description: {pet.data.description ?? ''}</p>
+                <p>Happiness: {pet.data.hp}/10</p>
+                {pet.data.garden &&
+                    <p>Retrospective: {pet.data.retro ?? ''}</p>
                 }
-                <div onClick={() => dispatch(setFocusId(undefined))}>Return to Pets List</div>
-                {!pet.garden &&
+                <div>Return to Pets List</div>
+                {!pet.data.garden &&
                     <>
                         <div onClick={() => setEditPet(true)}>Edit Pet</div>
                         <div>Release Pet Into Garden</div>
                     </>
                 }
-                <div>Delete Pet</div>
+                <div onClick={() => handleDeletePet()}>Delete Pet</div>
             </div>
         )
     } else {

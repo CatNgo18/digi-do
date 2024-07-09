@@ -29,11 +29,6 @@ export enum TaskStatus {
     Incomplete = 0,
 };
 
-export type ResourceList<T> = {
-    data: T[];
-    focusId: number | undefined;
-}
-
 // API responses
 export type UserResponse = {
     user: User;

@@ -1,17 +1,31 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
 import './index.css'
 import { makeServer } from './mirage'
 import { Provider } from 'react-redux'
 import { store } from './state/store.ts'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Pet from './pages/Pet'
+import Task from './pages/Task'
+import Layout from './pages/Layout'
+import Home from './pages/Home'
+import NoPage from './pages/NoPage'
 
 makeServer({environment: "dev"})
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<Home />}/>
+            <Route path='pets/:petId' element={<Pet />}/>
+            <Route path='pets/:petId/tasks/:taskId' element={<Task />}/>
+            <Route path="*" element={<NoPage />}/>
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
 )
