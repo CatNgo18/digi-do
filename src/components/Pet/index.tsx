@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../state/hooks";
 import { getPetsByUserId } from "../../state/pets/petsSlice";
 import { updatePet, deletePet } from "../../state/pet/petSlice";
 
+// Pet data for specific pet that user owns
 export default function Pet() {
     const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.user);

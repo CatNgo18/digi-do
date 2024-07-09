@@ -11,6 +11,7 @@ type FilterType = {
   },
 }
 
+// List of pets belonging to logged in user
 export default function Pets() {
     const user = useAppSelector((state) => state.user)
     const pets = useAppSelector((state) => state.pets)
@@ -58,7 +59,6 @@ export default function Pets() {
   
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = event.target;
-      console.log(name, value)
       setFilters((prevFormData) => ({...prevFormData, [name]: value}));
     }
 
@@ -68,9 +68,9 @@ export default function Pets() {
     }, [user.data])
   
     switch (pets.status) {
-      case 'loading':
+      case 'loading': // Getting list of pets from db
         return <p>Loading...</p>
-      case 'finished':
+      case 'finished': // Succesfully retrieved list of pets from db
         if (pets.data) {
           return (
             <div>
@@ -124,7 +124,7 @@ export default function Pets() {
           console.log(pets.errorMessage);
           return <p>No pets found.</p>
         }
-      case 'error':
+      case 'error': // Error retrieving list of pets
         console.log(pets.errorMessage);
         return <p>No pets found.</p>
     }

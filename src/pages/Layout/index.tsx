@@ -4,6 +4,7 @@ import { getUserById } from "../../state/user/userSlice";
 import { Link, Outlet } from "react-router-dom";
 import User from "../../components/User";
 
+// Common elements throughout all pages
 export default function Layout() {
     const user = useAppSelector((state) => state.user)
     const dispatch = useAppDispatch();
