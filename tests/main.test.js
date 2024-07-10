@@ -17,5 +17,4 @@ describe('group', () => {
     })
 })
 
-// https://www.robinwieruch.de/vitest-react-testing-library/
-// https://miragejs.com/quickstarts/react/test-a-component-with-react-testing-library/
+// https://www.youtube.com/watch?v=8Xwq35cPwYg&t=1275s

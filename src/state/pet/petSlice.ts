@@ -31,6 +31,16 @@ export const deletePet = createAsyncThunk<Pet, number, {dispatch: AppDispatch}>(
     }
 );
 
+export const getPet = createAsyncThunk<Pet, number, {dispatch: AppDispatch}>(
+    'pets/getPet',
+    async (petId: number) => {
+        const response = await fetchPet(
+            `/api/pets/${petId}`
+        );
+        return response.pet;
+    }
+);
+
 const petSlice = createSlice({
     name: "user",
     initialState: {status: 'loading'} as GenericState<Pet>,
@@ -49,12 +59,21 @@ const petSlice = createSlice({
         }).addCase(deletePet.pending, (state: GenericState<Pet>) => {
             state.status = 'loading';
             state.errorMessage = undefined;
-        }).addCase(deletePet.fulfilled, (state: GenericState<Pet>, action: PayloadAction<Pet>) => {
+        }).addCase(deletePet.fulfilled, (state: GenericState<Pet>) => {
             state.status = 'finished';
-            state.data = action.payload;
+            state.data = undefined;
         }).addCase(deletePet.rejected, (state: GenericState<Pet>) => {
             state.status = 'error';
             state.errorMessage = 'Error: Cannot delete pet';
+        }).addCase(getPet.pending, (state: GenericState<Pet>) => {
+            state.status = 'loading';
+            state.errorMessage = undefined;
+        }).addCase(getPet.fulfilled, (state: GenericState<Pet>, action: PayloadAction<Pet>) => {
+            state.status = 'finished';
+            state.data = action.payload;
+        }).addCase(getPet.rejected, (state: GenericState<Pet>) => {
+            state.status = 'error';
+            state.errorMessage = 'Error: Cannot get pet';
         })
     }
 });
