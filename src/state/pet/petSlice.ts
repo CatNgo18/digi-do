@@ -41,6 +41,20 @@ export const getPet = createAsyncThunk<Pet, number, {dispatch: AppDispatch}>(
     }
 );
 
+export const createPet = createAsyncThunk<Pet, {userId: number, pet: {name: string, title: string, description: string}}, {dispatch: AppDispatch}>(
+    'pets/createPet',
+    async (data: {userId: number, pet: {name?: string, title: string, description?: string}}) => {
+        const response = await fetchPet(
+            `/api/users/${data.userId}/pets`,
+            {
+                method: 'POST',
+                body: JSON.stringify(data.pet),
+            }
+        );
+        return response.pet;
+    }
+);
+
 const petSlice = createSlice({
     name: "user",
     initialState: {status: 'loading'} as GenericState<Pet>,
@@ -74,6 +88,14 @@ const petSlice = createSlice({
         }).addCase(getPet.rejected, (state: GenericState<Pet>) => {
             state.status = 'error';
             state.errorMessage = 'Error: Cannot get pet';
+        }).addCase(createPet.pending, (state: GenericState<Pet>) => {
+            state.status = 'loading';
+            state.errorMessage = undefined;
+        }).addCase(createPet.fulfilled, (state: GenericState<Pet>) => {
+            state.status = 'finished';
+        }).addCase(createPet.rejected, (state: GenericState<Pet>) => {
+            state.status = 'error';
+            state.errorMessage = 'Error: Cannot create pet';
         })
     }
 });

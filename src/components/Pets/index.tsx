@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
 import { getPetsByUserId } from "../../state/pets/petsSlice";
 import { Link } from "react-router-dom";
+import PetForm from "../PetForm";
 
 type FilterType = {
   garden: 'Active' | 'Garden' | 'Both',
   search: string,
-  happiness: {
-    min: number,
-    max: number,
-  },
+  happiness_min: number,
+  happiness_max: number,
 }
 
 // List of pets belonging to logged in user
@@ -17,7 +16,8 @@ export default function Pets() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user)
   const pets = useAppSelector((state) => state.pets)
-  const [filters, setFilters] = useState<FilterType>({ garden: 'Both', search: '', happiness: { min: 0, max: 10 } });
+  const [filters, setFilters] = useState<FilterType>({ garden: 'Both', search: '', happiness_min: 0, happiness_max: 10 });
+  const [createPet, setCreatePet] = useState(false);
   const filteredPets = pets.data?.filter((pet) => {
     // Check to see if pet fails any filters
     for (let filter in filters) {
@@ -38,9 +38,15 @@ export default function Pets() {
             return false;
           }
           break;
-        case 'happiness':
-          // return false if happiness points is outside of filter range
-          if (pet.hp < filters.happiness.min || pet.hp > filters.happiness.max) {
+        case 'happiness_min':
+          // return false if happiness points is less than min
+          if (pet.hp < filters.happiness_min) {
+            return false;
+          }
+          break;
+        case 'happiness_max':
+          // return false if happiness points is more than max
+          if (pet.hp > filters.happiness_max) {
             return false;
           }
       }
@@ -89,11 +95,11 @@ export default function Pets() {
               </label>
               <label>
                 Happiness Min.:
-                <input name='happiness_min' id='happiness_min' type='number' min='0' max='10' value={filters.happiness.min} onChange={handleChange} />
+                <input name='happiness_min' id='happiness_min' type='number' min='0' max='10' value={filters.happiness_min} onChange={handleChange} />
               </label>
               <label>
                 Happiness Max.:
-                <input name='happiness_max' id='happiness_max' type='number' min='0' max='10' value={filters.happiness.max} onChange={handleChange} />
+                <input name='happiness_max' id='happiness_max' type='number' min='0' max='10' value={filters.happiness_max} onChange={handleChange} />
               </label>
             </form>
 
@@ -102,9 +108,9 @@ export default function Pets() {
               {filteredPets?.map((pet, index) =>
                 <Link to={`/pets/${pet.id}`} key={index}>
                   <div>
-                    <p>Name: {pet?.name}</p>
-                    <p>Title: {pet?.title}</p>
-                    <p>Description: {pet?.description}</p>
+                    <p>Name: {pet.name}</p>
+                    <p>Title: {pet.title}</p>
+                    <p>Description: {pet.description}</p>
                     <p>Happiness: {pet.hp}</p>
                   </div>
                 </Link>
@@ -112,7 +118,14 @@ export default function Pets() {
               )}
             </div>
 
-            {!filters.garden && <div>Create new pet</div>}
+            <div onClick={() => setCreatePet(true)}>Create new pet</div>
+
+            {createPet &&
+              <PetForm
+                setFormVisible={setCreatePet}
+                action='create'
+              />
+            }
           </div>
         )
       } else {

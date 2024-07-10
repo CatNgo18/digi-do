@@ -98,7 +98,9 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a userID, create a pet belonging to that user
             this.post('/users/:userId/pets', (schema: AppSchema, request: Request) => {
-                let attrs = JSON.parse(request.requestBody).pet;
+                let attrs = JSON.parse(request.requestBody);
+
+                attrs = Object.assign({hp: 5, garden: false}, attrs);
 
                 return schema.create("pet", {
                     userId: parseInt(request.params.userId),
@@ -123,7 +125,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a petID, create a task belonging to that pet
             this.post('/pets/:petId/tasks', (schema: AppSchema, request: Request) => {
-                let attrs = JSON.parse(request.requestBody).task;
+                let attrs = JSON.parse(request.requestBody);
 
                 return schema.create("task", {
                     petId: parseInt(request.params.petId),
@@ -153,7 +155,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given their petIDs, delete multiple pets from the table
             this.del('/pets', (schema: AppSchema, request: Request) => {
-                let petIds = JSON.parse(request.requestBody).petIds;
+                let petIds = JSON.parse(request.requestBody);
 
                 petIds.forEach((petId: number) => {
                     let pet = schema.find("pet", `${petId}`);

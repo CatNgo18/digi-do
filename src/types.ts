@@ -7,11 +7,11 @@ export type User = {
 export type Pet = {
     id: number;
     userId: number;
-    name?: string;
+    name: string;
     title: string;
-    description?: string;
+    description: string;
     hp: number;
-    retro?: string;
+    retro: string;
     garden: boolean;
 };
 
@@ -19,7 +19,7 @@ export type Task = {
     id: number;
     petId: number;
     title: string;
-    description?: string;
+    description: string;
     dueDate?: Date;
     status: TaskStatus;
 };
