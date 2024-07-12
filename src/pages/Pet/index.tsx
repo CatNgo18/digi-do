@@ -1,5 +1,6 @@
+import React from "react";
 import { useParams } from "react-router-dom"
-import { useAppDispatch, useAppSelector } from "../../state/hooks";
+import { useAppDispatch } from "../../state/hooks";
 import { getPet } from "../../state/pet/petSlice";
 import { useEffect } from "react";
 import PetInfo from '../../components/Pet';
@@ -11,7 +12,7 @@ export default function Pet() {
 
     useEffect(() => {
         if (petId)
-            dispatch(getPet(parseInt(petId)))
+            dispatch(getPet(petId))
     }, []);
 
     return <PetInfo />

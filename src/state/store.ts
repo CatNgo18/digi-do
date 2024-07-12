@@ -1,17 +1,22 @@
-import { configureStore } from "@reduxjs/toolkit";
-import userSlice from "./user/userSlice";
-import petsSlice from "./pets/petsSlice";
-import petSlice from "./pet/petSlice";
+// https://redux.js.org/usage/writing-tests
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import userReducer from "./user/userSlice";
+import petsReducer from "./pets/petsSlice";
+import petReducer from "./pet/petSlice";
 
-export const store = configureStore({
-    reducer: {
-        user: userSlice,
-        pets: petsSlice,
-        pet: petSlice,
-        // TODO:
-        // tasks: tasksReducer,
-    },
+// Create the root reducer independently to obtain the RootState type
+const rootReducer = combineReducers({
+    user: userReducer,
+    pets: petsReducer,
+    pet: petReducer,
 })
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export const setupStore = (preloadedState?: Partial<RootState>) => {
+    return configureStore({
+        reducer: rootReducer,
+        preloadedState
+    })
+}
+export type RootState = ReturnType<typeof rootReducer>
+export type AppStore = ReturnType<typeof setupStore>
+export type AppDispatch = AppStore['dispatch']

@@ -1,12 +1,12 @@
 // DB tables
 export type User = {
-    id: number;
+    id: string;
     name: string;
 };
 
 export type Pet = {
-    id: number;
-    userId: number;
+    id: string;
+    userId: string;
     name: string;
     title: string;
     description: string;
@@ -16,8 +16,8 @@ export type Pet = {
 };
 
 export type Task = {
-    id: number;
-    petId: number;
+    id: string;
+    petId: string;
     title: string;
     description: string;
     dueDate?: Date;

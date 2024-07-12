@@ -92,7 +92,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
             // Given a userID, return a list of pets belonging to that user
             this.get('/users/:userId/pets', (schema: AppSchema, request: Request) => {
                 return schema.where("pet", {
-                    userId: parseInt(request.params.userId),
+                    userId: request.params.userId,
                 });
             });
 
@@ -119,7 +119,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
             // Given a petID, return a list of tasks belonging to that pet
             this.get('/pets/:petId/tasks', (schema: AppSchema, request: Request) => {
                 return schema.where("task", {
-                    petId: parseInt(request.params.petId),
+                    petId: request.params.petId,
                 });
             });
 
@@ -128,7 +128,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
                 let attrs = JSON.parse(request.requestBody);
 
                 return schema.create("task", {
-                    petId: parseInt(request.params.petId),
+                    petId: request.params.petId,
                     ...attrs
                 });
             });

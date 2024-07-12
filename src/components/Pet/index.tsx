@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
-import { getPetsByUserId } from "../../state/pets/petsSlice";
 import { updatePet, deletePet } from "../../state/pet/petSlice";
 import { Link } from "react-router-dom";
 import PetForm from "../PetForm";

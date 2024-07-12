@@ -4,9 +4,9 @@ import GenericState from '../genericState';
 import { AppDispatch } from '../store';
 import { Pet } from '../../types';
 
-export const getPetsByUserId = createAsyncThunk<Pet[], number, {dispatch: AppDispatch}>(
+export const getPetsByUserId = createAsyncThunk<Pet[], string, {dispatch: AppDispatch}>(
     'pets/getPetsByUserId',
-    async (userId: number) => {
+    async (userId: string) => {
         const response = await fetchPets(
             `/api/users/` +
             `${import.meta.env.PROD ? userId : import.meta.env.VITE_USER_ID}` +

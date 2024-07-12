@@ -18,9 +18,9 @@ export const updatePet = createAsyncThunk<Pet, Pet, {dispatch: AppDispatch}>(
     }
 );
 
-export const deletePet = createAsyncThunk<Pet, number, {dispatch: AppDispatch}>(
+export const deletePet = createAsyncThunk<Pet, string, {dispatch: AppDispatch}>(
     'pets/deletePet',
-    async (petId: number) => {
+    async (petId: string) => {
         const response = await fetchPet(
             `/api/pets/${petId}`,
             {
@@ -31,9 +31,9 @@ export const deletePet = createAsyncThunk<Pet, number, {dispatch: AppDispatch}>(
     }
 );
 
-export const getPet = createAsyncThunk<Pet, number, {dispatch: AppDispatch}>(
+export const getPet = createAsyncThunk<Pet, string, {dispatch: AppDispatch}>(
     'pets/getPet',
-    async (petId: number) => {
+    async (petId: string) => {
         const response = await fetchPet(
             `/api/pets/${petId}`
         );
@@ -41,9 +41,9 @@ export const getPet = createAsyncThunk<Pet, number, {dispatch: AppDispatch}>(
     }
 );
 
-export const createPet = createAsyncThunk<Pet, {userId: number, pet: {name: string, title: string, description: string}}, {dispatch: AppDispatch}>(
+export const createPet = createAsyncThunk<Pet, {userId: string, pet: {name: string, title: string, description: string}}, {dispatch: AppDispatch}>(
     'pets/createPet',
-    async (data: {userId: number, pet: {name?: string, title: string, description?: string}}) => {
+    async (data: {userId: string, pet: {name?: string, title: string, description?: string}}) => {
         const response = await fetchPet(
             `/api/users/${data.userId}/pets`,
             {

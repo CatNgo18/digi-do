@@ -4,9 +4,9 @@ import GenericState from '../genericState';
 import { AppDispatch } from '../store';
 import { User } from '../../types';
 
-export const getUserById = createAsyncThunk<User, number, {dispatch: AppDispatch}>(
+export const getUserById = createAsyncThunk<User, string, {dispatch: AppDispatch}>(
     'user/getUserById',
-    async (userId: number) => {
+    async (userId: string) => {
         const response = await fetchUser(
             `/api/users/` +
             `${import.meta.env.PROD ? userId : import.meta.env.VITE_USER_ID}`
