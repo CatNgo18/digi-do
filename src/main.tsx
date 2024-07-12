@@ -10,6 +10,11 @@ import Task from './pages/Task'
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import NoPage from './pages/NoPage'
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 
 makeServer({environment: "dev"})
 
