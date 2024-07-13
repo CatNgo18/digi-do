@@ -13,7 +13,7 @@ export default function Pet() {
     useEffect(() => {
         if (petId)
             dispatch(getPet(petId))
-    }, []);
+    }, [petId]);
 
     return <PetInfo />
     
