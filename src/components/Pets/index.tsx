@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
 import { getPetsByUserId } from "../../state/pets/petsSlice";
 import { Link } from "react-router-dom";
@@ -18,8 +18,8 @@ export default function Pets() {
   const pets = useAppSelector((state) => state.pets)
   const [filters, setFilters] = useState<FilterType>({ garden: 'Both', search: '', happiness_min: 0, happiness_max: 10 });
   const [createPet, setCreatePet] = useState(false);
-  
-  const filteredPets = pets.data?.filter((pet) => {
+
+  const filteredPets = useMemo(() => pets.data?.filter((pet) => {
     // Check to see if pet fails any filters
     for (let filter in filters) {
       switch (filter) {
@@ -54,7 +54,7 @@ export default function Pets() {
     }
 
     return true;
-  });
+  }), [pets.data, filters]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
