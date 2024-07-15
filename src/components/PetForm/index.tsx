@@ -13,7 +13,7 @@ export default function PetForm({defaultValues, action, setFormVisible}: PetForm
     const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.user);
     const pets = useAppSelector((state) => state.pets);
-    const [formData, setFormData] = useState(defaultValues || {});
+    const [formData, setFormData] = useState<Partial<Pet>>(defaultValues || {});
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
@@ -46,9 +46,12 @@ export default function PetForm({defaultValues, action, setFormVisible}: PetForm
 
     return (
         <form onSubmit={handleSubmit}>
-            <label>Name: <input name="name" value={defaultValues?.name} onChange={handleChange}/></label>
-            <label>Title: <input name="title" value={defaultValues?.title} onChange={handleChange}/></label>
-            <label>Description: <textarea name="description" value={defaultValues?.description} onChange={handleChange}/></label>
+            <label>Name: <input name="name" value={formData?.name} onChange={handleChange}/></label>
+            <br/>
+            <label>Title: <input name="title" value={formData?.title} onChange={handleChange}/></label>
+            <br/>
+            <label>Description: <textarea name="description" value={formData?.description} onChange={handleChange}/></label>
+            
             <button type='submit'>Submit</button>
             <button onClick={() => setFormVisible(false)}>Cancel</button>
         </form>
