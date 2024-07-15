@@ -16,7 +16,7 @@ export default function Layout() {
             if (user.data)
                 dispatch(getUserById(user.data.id))
         }
-    }, [user.data])
+    }, [])
 
     return (
         <>

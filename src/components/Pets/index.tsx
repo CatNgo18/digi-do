@@ -67,7 +67,7 @@ export default function Pets() {
     } else {
       dispatch(petsError('Error: No user found'))
     }
-  }, [user.data])
+  }, [])
 
   switch (pets.status) {
     case 'loading': // Getting list of pets from db
