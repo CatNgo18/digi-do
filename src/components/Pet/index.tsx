@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
 import { updatePet, deletePet } from "../../state/pet/petSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PetForm from "../PetForm";
 import { Modal } from "@mui/material";
 import { getPetsByUserId } from "../../state/pets/petsSlice";
@@ -14,10 +14,13 @@ export default function Pet() {
     const pets = useAppSelector((state) => state.pets);
     const [editPet, setEditPet] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const handleDeletePet = async () => {
-        if (pet.data?.id)
-            dispatch(deletePet(pet.data.id))
+        if (pet.data?.id) {
+            await dispatch(deletePet(pet.data.id))
+            navigate('/');
+        }
     }
 
     const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
