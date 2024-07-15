@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../state/hooks";
 import { getPetsByUserId, petsError } from "../../state/pets/petsSlice";
 import { Link } from "react-router-dom";
 import PetForm from "../PetForm";
+import './index.css';
 
 type FilterType = {
   garden: 'Active' | 'Garden' | 'Both',
@@ -92,10 +93,12 @@ export default function Pets() {
                     <input name='garden' id='both' type='radio' value='Both' checked={filters.garden === 'Both'} onChange={handleChange} />
                     Both
                   </label>
+                  <br/>
                   <label>
                     Search:
                     <input name='search' id='search' type='search' value={filters.search} onChange={handleChange} />
                   </label>
+                  <br/>
                   <label>
                     Happiness Min.:
                     <input name='happiness_min' id='happiness_min' type='number' min='0' max='10' value={filters.happiness_min} onChange={handleChange} />
@@ -110,7 +113,7 @@ export default function Pets() {
                 <div id='pets-list'>
                   {filteredPets?.map((pet, index) =>
                     <Link to={`/pets/${pet.id}`} key={index}>
-                      <div>
+                      <div className="pet-card">
                         <p>Name: {pet.name}</p>
                         <p>Title: {pet.title}</p>
                         <p>Description: {pet.description}</p>
@@ -126,7 +129,7 @@ export default function Pets() {
             }
 
             { /* Create Pets */}
-            <div onClick={() => setCreatePet(true)}>Create new pet</div>
+            <button onClick={() => setCreatePet(true)}>Create new pet</button>
 
             {createPet &&
               <PetForm

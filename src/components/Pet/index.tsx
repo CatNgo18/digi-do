@@ -52,17 +52,22 @@ export default function Pet() {
                             <p>Title: {pet.data.title}</p>
                             <p>Description: {pet.data.description ?? ''}</p>
                             <p>Happiness: {pet.data.hp}/10</p>
-                            {pet.data.garden &&
-                                <p>Retrospective: {pet.data.retro ?? ''}</p>
+                            {pet.data.garden ?
+                                <>
+                                    <p>Retrospective: {pet.data.retro ?? ''}</p>
+                                    <p>(Garden Pet)</p>
+                                </>
+                            :
+                                <p>(Active Pet)</p>
                             }
-                            <Link to='/'>Return to Pets List</Link>
+                            <Link to='/'><button>Return to Pets List</button></Link>
                             {!pet.data.garden &&
                                 <>
-                                    <div onClick={() => setEditPet(true)}>Edit Pet</div>
-                                    <div onClick={() => setModalOpen(true)}>Release Pet Into Garden</div>
+                                    <button onClick={() => setEditPet(true)}>Edit Pet</button>
+                                    <button onClick={() => setModalOpen(true)}>Release Pet Into Garden</button>
                                 </>
                             }
-                            <div onClick={() => handleDeletePet()}>Delete Pet</div>
+                            <button onClick={() => handleDeletePet()}>Delete Pet</button>
                         </div>
                     )
                 } else if (editPet) {
@@ -90,7 +95,7 @@ export default function Pet() {
                 <form onSubmit={handleSubmit}>
                     <label>
                         Retrospective:
-                        <textarea name='retro' id='retro'/>
+                        <textarea name='retro' id='retro' />
                     </label>
                     <button type='submit'>Submit</button>
                     <button onClick={() => setModalOpen(false)}>Cancel</button>
