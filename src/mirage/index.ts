@@ -93,7 +93,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
             this.get('/users/:userId/pets', (schema: AppSchema, request: Request) => {
                 return schema.where("pet", {
                     userId: request.params.userId,
-                });
+                }).sort((a,b) => parseInt(a.id) - parseInt(b.id));
             });
 
             // Given a userID, create a pet belonging to that user

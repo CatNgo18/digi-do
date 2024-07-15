@@ -9,7 +9,7 @@ export const getUserById = createAsyncThunk<User, string, {dispatch: AppDispatch
     async (userId: string) => {
         const response = await fetchUser(
             `/api/users/` +
-            `${import.meta.env.PROD ? userId : import.meta.env.VITE_USER_ID}`
+            `${userId}`
         );
         return response.user;
     }

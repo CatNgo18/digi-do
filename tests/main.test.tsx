@@ -1,105 +1,249 @@
 import React from 'react';
 import { expect, describe, afterEach, beforeEach, test } from 'vitest';
-import { renderHook, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, renderHook, screen, waitFor } from '@testing-library/react';
 import Pet from '../src/pages/Pet';
 import { makeServer } from "../src/mirage";
 import { Server } from 'miragejs';
-import { Pet as PetType } from '../src/types';
+import { Pet as PetType, User as UserType } from '../src/types';
 import { renderWithProviders } from './utils/testUtils';
 import '@testing-library/jest-dom/vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import Home from '../src/pages/Home';
+import GenericState from '../src/state/genericState';
 
 let server: Server;
 
+const TEST_USER: UserType = {
+    id: '1',
+    name: "Test User"
+}
+
+const TEST_PETS: Array<PetType> = [
+    {
+        id: '1',
+        userId: '1',
+        name: 'Active Pet',
+        title: 'Active Pet',
+        description: 'Active Pet',
+        hp: 2,
+        retro: '',
+        garden: false,
+    },
+    {
+        id: '2',
+        userId: '1',
+        name: 'Garden Pet',
+        title: 'Garden Pet',
+        description: 'Garden Pet',
+        hp: 7,
+        retro: 'Garden Pet',
+        garden: true,
+    }
+]
+
 beforeEach(() => {
     server = makeServer({ environment: 'test' });
+    server.create('user', TEST_USER);
+    server.create('pet', TEST_PETS[0]);
+    server.create('pet', TEST_PETS[1]);
 });
 
 afterEach(() => {
     server.shutdown();
+    cleanup();
 });
 
 describe('View List of Pets', () => {
-    const setup = (initialPet: Partial<PetType> & Omit<PetType, 'userId' | 'id'>) => {
-        const pet = server.create('pet', initialPet);
-        const user = server.create('user', pet);
-
+    const renderWithUser = (user: GenericState<UserType>) => {
         const { unmount } = renderWithProviders(
-            <MemoryRouter initialEntries={[`/pets/${pet.id}`]}>
-                <Pet />
+            <MemoryRouter>
+                <Routes>
+                    <Route path='/' element={<Home />} />
+                </Routes>
             </MemoryRouter>,
             {
                 preloadedState: {
-                    pet: {
+                    user
+                }
+            }
+        );
+
+        return unmount;
+    }
+
+    test('if list of pets is loading, show "Loading pets..." ', () => {
+        const unmount = renderWithUser({status: 'finished', data: TEST_USER, errorMessage: undefined});
+
+        expect(screen.getByText('Loading pets...')).toBeInTheDocument();
+
+        unmount();
+    })
+
+    test('if list of pets could not load, show "No pets found."', async () => {
+        const unmount = renderWithUser({status: 'error', data: undefined, errorMessage: undefined});
+
+        await waitFor(() => expect(screen.getByText('No pets found.')).toBeInTheDocument());
+
+        unmount();
+    })
+
+    test('if user has no pets, show no pets', async () => {
+        const noPetsUser = {
+            id: '2',
+            name: 'No Pets',
+        };
+
+        server.create('user', noPetsUser);
+
+        const unmount = renderWithUser({status: 'finished', data: noPetsUser, errorMessage: undefined});
+
+        await waitFor(() => expect(screen.getByText('No pets found.')).toBeInTheDocument());
+
+        unmount();
+    })
+
+    test('if user has pets and pets loaded, show list of pets', async () => {
+        const unmount = renderWithUser({status: 'finished', data: TEST_USER, errorMessage: undefined});
+
+        await waitFor(async () => {
+            const links = screen.getAllByRole('link');
+
+            // Verify hrefs of all pets
+            for (let i = 0; i < links.length; i++) {
+                expect(links[i]).toHaveAttribute('href', `/pets/${i + 1}`); // List of pets should be returned in id order by default
+            }
+        });
+
+        unmount();
+    })
+})
+
+// TODO:
+describe('Filter List of Pets', () => {
+    const renderPetList = async () => {
+        // render pet list
+        const { unmount } = renderWithProviders(
+            <MemoryRouter>
+                <Routes>
+                    <Route path='/' element={<Home />} />
+                </Routes>
+            </MemoryRouter>,
+            {
+                preloadedState: {
+                    user: {
                         status: 'finished',
-                        data: {
-                            ...initialPet,
-                            id: pet.id,
-                            userId: user.id,
-                        },
+                        data: TEST_USER,
                         errorMessage: undefined,
                     }
                 }
             }
         );
+        
+        // wait for pets to load
+        await waitFor(async () => {
+            const links = screen.getAllByRole('link');
 
-        screen.debug();
+            expect(links.length).toBe(2);
+        });
 
         return unmount;
     }
 
-    test('if list of pets is loading, show "Loading" ', () => {
+    const findPetLink = (testPetsIndex: number[]) => {
+        const links = screen.getAllByRole('link');
+        
+        testPetsIndex.forEach((petIndex) => {
+            const link = links.find((link) => link.getAttribute('href') === `/pets/${TEST_PETS[petIndex].id}`);
 
-    })
+            expect(link).toBeDefined();
+        });
+    }
 
-    test('if list of pets could not load, show "Error" ', () => {
-
-    })
-
-    test('if user has no pets, show no pets', () => {
-
-    })
-
-    test('if user has pets and pets loaded, show list of pets', () => {
-
-    })
-})
-
-describe('Filter List of Pets', () => {
     describe('Filter List of Pets by Active/Garden (Archive)', () => {
-        test('if "Active" filter is on, only show pets not in garden', () => {
+        const applyRadioFilter = (name: string) => {
+            const radioButton = screen.getByRole('radio', {name});
+            fireEvent.click(radioButton);
+        }
 
+        test('if "Active" filter is on, only show pets not in garden', async () => {
+            // render function
+            const unmount = await renderPetList();
+
+            // apply active filter
+            applyRadioFilter('Active');
+
+            // check to see if only TEST_PETS[0] is in list
+            findPetLink([0]);
+
+            unmount();
         })
 
-        test('if "Garden" filter is on, only show pets in garden', () => {
+        test('if "Garden" filter is on, only show pets in garden', async () => {
+            // render function
+            const unmount = await renderPetList();
 
+            // apply garden filter
+            applyRadioFilter('Garden');
+
+            // check to see if only TEST_PETS[1] is in list
+            findPetLink([1]);
+
+            unmount();
         })
 
-        test('if "Both" filter is on, show pets both in and not in garden', () => {
+        test('if "Both" filter is on, show pets both in and not in garden', async () => {
+            // render function
+            const unmount = await renderPetList();
 
+            // apply both filter
+            applyRadioFilter('Both');
+
+            // check to see if all of TEST_PETS is in list
+            findPetLink(Array.from(TEST_PETS.keys()));
+
+            unmount();
         })
     })
 
     describe('Filter List of Pets by Search', () => {
-        test('if "Search" has a string, only show pets that include string in name, description, or title', () => {
+        test('if "Search" has a string, only show pets that include string in name, description, or title', async () => {
+            // render function
+            const unmount = await renderPetList();
 
+            // fill out search filter w/ "Active"
+
+            // check to see if only TEST_PETS[0] is in list
+            
+            unmount();
         })
     })
 
     describe('Filter List of Pets by Happiness Points Level', () => {
-        test('if "Happiness Points" range is specified, only show pets whose happiness pets fall within that range', () => {
+        test('if "Happiness Points" range is specified, only show pets whose happiness pets fall within that range', async () => {
+            // render function
+            const unmount = await renderPetList();
 
+            // fill out Happiness Points min as 3
+
+            // check to see if only TEST_PETS[1] is in list
+
+            // fill out Happiness Points max as 6
+
+            // check to see if there are no pets in list
+
+            // fill out Happiness Points min as 2
+
+            // check to see if only TEST_PETS[0] is in list
+
+            unmount();
         })
     })
 })
 
 describe('Click Pet in List to View Details', () => {
-    const setup = (initialPet: Partial<PetType> & Omit<PetType, 'userId' | 'id'>) => {
-        const pet = server.create('pet', initialPet);
-        const user = server.create('user', pet);
-
+    const renderPet = (petId: string) => {
         const { unmount } = renderWithProviders(
-            <MemoryRouter initialEntries={[`/pets/${pet.id}`]}>
+            <MemoryRouter initialEntries={[`/pets/${petId}`]}>
                 <Routes>
                     <Route path='/pets/:petId' element={<Pet />} />
                 </Routes>
@@ -109,127 +253,267 @@ describe('Click Pet in List to View Details', () => {
                     user: {
                         status: 'finished',
                         errorMessage: undefined,
-                        data: {
-                            id: user.id,
-                            name: "Test User"
-                        }
+                        data: TEST_USER
                     }
                 }
             }
         );
 
         return unmount;
-    }
+    };
 
-    test("when pet in list is clicked, navigate to pet details page", () => {
+    test("when pet in list is clicked, navigate to pet details page", async () => {
+        const { unmount } = renderWithProviders(
+            <MemoryRouter>
+                <Routes>
+                    <Route path='/' element={<Home />} />
+                    <Route path='/pets/:petId' element={<Pet />} />
+                </Routes>
+            </MemoryRouter>,
+            {
+                preloadedState: {
+                    user: {
+                        status: 'finished',
+                        errorMessage: undefined,
+                        data: TEST_USER
+                    }
+                }
+            }
+        );
 
+
+        await waitFor(async () => {
+            const links = screen.getAllByRole('link');
+
+            // Verify hrefs of all pets
+            for (let i = 0; i < links.length; i++) {
+                expect(links[i]).toHaveAttribute('href', `/pets/${i + 1}`); // List of pets should be returned in id order by default
+            }
+
+            // Click first pet
+            fireEvent.click(links[0]);
+
+            // Verify that the navigated page corresponds to the pet that was clicked
+            expect(screen.getByText(`Loading pet...`)).toBeInTheDocument();
+            await waitFor(() => expect(screen.getByText(`Name: ${TEST_PETS[0].name}`)).toBeInTheDocument());
+        });
+
+        unmount();
     })
 
-    test('if pet is loading, show "Loading"', () => {
+    test('if pet is loading, show "Loading pet..."', () => {
+        const unmount = renderPet(TEST_PETS[0].id);
 
+        // Pet is loading
+        expect(screen.getByText(`Loading pet...`)).toBeInTheDocument();
+
+        unmount();
     })
 
-    test('if pet cannot laod, show "Error"', () => {
+    test('if pet cannot laod, show "Cannot find pet."', async () => {
+        const unmount = renderPet('3');
 
+        // Wait for data to finish loading
+        await waitFor(() => expect(screen.getByText(`Cannot find pet.`)).toBeInTheDocument());
+
+        unmount();
     })
 
     test('if pet is "Active", render Pet with details (name, title, description, happiness) and actions (return to pets list, edit pet, move pet to garden, delete pet)', async () => {
-        const initialPet = { name: 'Test 1 Name', title: 'Test 1 Title', description: 'Test 1 Description', hp: 5, retro: '', garden: false };
-
-        const unmount = setup(initialPet);
-
-        // Pet is loading
-        expect(screen.getByText(/Loading pet.../i)).toBeInTheDocument();
+        const unmount = renderPet(TEST_PETS[0].id);
 
         // Wait for data to finish loading
-        await waitFor(() => expect(screen.getByText(/Name: Test 1 Name/i)).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText(`Name: ${TEST_PETS[0].name}`)).toBeInTheDocument());
 
         // show Pet details
-        expect(screen.getByText(/Title: Test 1 Title/i)).toBeInTheDocument();
-        expect(screen.getByText(/Description: Test 1 Description/i)).toBeInTheDocument();
-        expect(screen.getByText(/Happiness: 5\/10/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Retrospective:/i)).not.toBeInTheDocument();
+        expect(screen.getByText(`Title: ${TEST_PETS[0].title}`)).toBeInTheDocument();
+        expect(screen.getByText(`Description: ${TEST_PETS[0].description}`)).toBeInTheDocument();
+        expect(screen.getByText(`Happiness: ${TEST_PETS[0].hp}\/10`)).toBeInTheDocument();
+        expect(screen.queryByText(`Retrospective:`)).not.toBeInTheDocument();
 
         // show Pet actions
-        expect(screen.getByText(/Return to Pets List/i)).toBeInTheDocument();
-        expect(screen.getByText(/Edit Pet/i)).toBeInTheDocument();
-        expect(screen.getByText(/Release Pet Into Garden/i)).toBeInTheDocument();
-        expect(screen.getByText(/Delete Pet/i)).toBeInTheDocument();
+        expect(screen.getByText(`Return to Pets List`)).toBeInTheDocument();
+        expect(screen.getByText(`Edit Pet`)).toBeInTheDocument();
+        expect(screen.getByText(`Release Pet Into Garden`)).toBeInTheDocument();
+        expect(screen.getByText(`Delete Pet`)).toBeInTheDocument();
 
         unmount();
     })
 
     test('if pet is in "Garden", render Pet with details (name, title, description, happiness, retrospective) and actions (return to pets list, delete pet)', async () => {
-        const initialPet = { name: 'Test 2 Name', title: 'Test 2 Title', description: 'Test 2 Description', hp: 5, retro: 'Test 2 Retro', garden: true };
-
-        const unmount = setup(initialPet);
-
-        // Pet is loading
-        expect(screen.getByText(/Loading pet.../i)).toBeInTheDocument();
+        const unmount = renderPet(TEST_PETS[1].id);
 
         // Wait for data to finish loading
-        await waitFor(() => expect(screen.getByText(/Name: Test 2 Name/i)).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText(`Name: ${TEST_PETS[1].name}`)).toBeInTheDocument());
 
         // show Pet details
-        expect(screen.getByText(/Title: Test 2 Title/i)).toBeInTheDocument();
-        expect(screen.getByText(/Description: Test 2 Description/i)).toBeInTheDocument();
-        expect(screen.getByText(/Happiness: 5\/10/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Retrospective: Test 2 Retro/i)).toBeInTheDocument();
+        expect(screen.getByText(`Title: ${TEST_PETS[1].title}`)).toBeInTheDocument();
+        expect(screen.getByText(`Description: ${TEST_PETS[1].description}`)).toBeInTheDocument();
+        expect(screen.getByText(`Happiness: ${TEST_PETS[1].hp}\/10`)).toBeInTheDocument();
+        expect(screen.getByText(`Retrospective: ${TEST_PETS[1].retro}`)).toBeInTheDocument();
 
         // show Pet actions
-        expect(screen.getByText(/Return to Pets List/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Edit Pet/i)).not.toBeInTheDocument();
-        expect(screen.queryByText(/Release Pet Into Garden/i)).not.toBeInTheDocument();
-        expect(screen.getByText(/Delete Pet/i)).toBeInTheDocument();
+        expect(screen.getByText(`Return to Pets List`)).toBeInTheDocument();
+        expect(screen.queryByText(`Edit Pet`)).not.toBeInTheDocument();
+        expect(screen.queryByText(`Release Pet Into Garden`)).not.toBeInTheDocument();
+        expect(screen.getByText(`Delete Pet`)).toBeInTheDocument();
 
         unmount();
     })
 });
 
+// TODO:
 describe('Create New Pet', () => {
-    test('trying to create a pet w/o a title results in an error', () => {
+    // render function:
 
+    // render pet list
+
+    // click on "create a pet"
+
+    // fill out info
+
+    test('trying to create a pet w/o a title results in an error', () => {
+        // render function
+
+        // delete title text
+
+        // click submit
+
+        // look for error
     })
 
     test('clicking "Cancel" results in no change in pet details', () => {
+        // render function
 
+        // click cancel
+
+        // ensure pet list is the same as before
     })
 
     test('if there is a server error, show "Error"', () => {
+        // render function
 
+        // click submit
+
+        // mock server error
+
+        // look for error
     })
 
     test('after creating a pet, the pet shows up in the pet list', () => {
+        // render function
 
+        // click submit
+
+        // wait for pets to load
+
+        // look for pet in list
     })
 })
 
+// TODO:
 describe('Edit Pet Details', () => {
-    test('trying to submit an edit that deletes the title results in an error', () => {
+    // render function:
 
+    // render pet details page
+
+    // wait for pet to load
+
+    // click "edit pet" button
+
+    test('trying to submit an edit that deletes the title results in an error', () => {
+        // render function
+
+        // empty title text box
+
+        // click submit
+
+        // find error
     })
 
     test('if there is a server error, show "Error"', () => {
+        // render function
 
+        // mock server error
+
+        // find error
     })
 
     test('after editing a pet, the pet details are updated', () => {
+        // render function
 
+        // type in new name, title, and description
+
+        // click submit
+
+        // wait for pet to load
+
+        // verify new name, title, and description are there
     })
 })
 
+// TODO:
 describe('Move Pet Into Garden (Archive)', () => {
-    test('clicking "Cancel" results in no change to pet list', () => {
+    // render function:
 
+    // render pet details page
+
+    // wait for pet to load
+
+    // click "move pet into garden button"
+
+    // fill out retro text box
+
+    test('clicking "Cancel" results in no change to pet list', () => {
+        // render function
+
+        // click "cancel" button
+
+        // check if we're still on pet details page, if pet retro is still empty, and if move pet into garden button still exists
+    })
+
+    test('if there is a server error, show "Error"', () => {
+        // render function
+
+        // mock server error
+
+        // find error
     })
 
     test('clicking "Submit" results in pet showing up in "Garden" filter and not "Active"', () => {
+        // render function
 
+        // click "submit" button
+
+        // check if we're on pet list page
+
+        // apply garden filter
+
+        // check if pet is in list
     })
 })
 
+// TODO:
 describe('Delete Pet', () => {
-    test('pet is no longer in pet list', () => {
+    // render function:
 
+    // render pet details page
+
+    // wait for pet to load
+
+    // click "delete pet" button
+
+    test('pet is no longer in pet list', () => {
+        // render function
+
+        // make sure pet is no longer in server db
+    })
+
+    test('if there is a server error, show "Error"', () => {
+        // render function
+
+        // mock server error
+
+        // find error
     })
 })

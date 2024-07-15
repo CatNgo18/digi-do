@@ -9,7 +9,7 @@ export const getPetsByUserId = createAsyncThunk<Pet[], string, {dispatch: AppDis
     async (userId: string) => {
         const response = await fetchPets(
             `/api/users/` +
-            `${import.meta.env.PROD ? userId : import.meta.env.VITE_USER_ID}` +
+            `${userId}` +
             `/pets`
         );
         return response.pets;
@@ -20,6 +20,10 @@ const petsSlice = createSlice({
     name: "user",
     initialState: {status: 'loading'} as GenericState<Pet[]>,
     reducers: {
+        petsError(state: GenericState<Pet[]>, action: PayloadAction<string>) {
+            state.status = 'error';
+            state.errorMessage = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getPetsByUserId.pending, (state: GenericState<Pet[]>) => {
@@ -34,5 +38,7 @@ const petsSlice = createSlice({
         })
     }
 });
+
+export const { petsError } = petsSlice.actions;
 
 export default petsSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
-import { getPetsByUserId } from "../../state/pets/petsSlice";
+import { getPetsByUserId, petsError } from "../../state/pets/petsSlice";
 import { Link } from "react-router-dom";
 import PetForm from "../PetForm";
 
@@ -62,63 +62,70 @@ export default function Pets() {
   }
 
   useEffect(() => {
-    if (user.data)
+    if (user.data) {
       dispatch(getPetsByUserId(user.data.id))
+    } else {
+      dispatch(petsError('Error: No user found'))
+    }
   }, [user.data])
 
   switch (pets.status) {
     case 'loading': // Getting list of pets from db
-      return <p>Loading...</p>
+      return <p>Loading pets...</p>
     case 'finished': // Succesfully retrieved list of pets from db
       if (pets.data) {
         return (
           <div>
-            { /* Filters */}
-            <form>
-              <label>
-                Type:
-                <label>
-                  <input name='garden' id='active' type='radio' value='Active' checked={filters.garden === 'Active'} onChange={handleChange} />
-                  Active
-                </label>
-                <label>
-                  <input name='garden' id='garden' type='radio' value='Garden' checked={filters.garden === 'Garden'} onChange={handleChange} />
-                  Garden
-                </label>
-                <label>
-                  <input name='garden' id='both' type='radio' value='Both' checked={filters.garden === 'Both'} onChange={handleChange} />
-                  Both
-                </label>
-              </label>
-              <label>
-                Search:
-                <input name='search' id='search' type='search' value={filters.search} onChange={handleChange} />
-              </label>
-              <label>
-                Happiness Min.:
-                <input name='happiness_min' id='happiness_min' type='number' min='0' max='10' value={filters.happiness_min} onChange={handleChange} />
-              </label>
-              <label>
-                Happiness Max.:
-                <input name='happiness_max' id='happiness_max' type='number' min='0' max='10' value={filters.happiness_max} onChange={handleChange} />
-              </label>
-            </form>
+            {pets.data.length ?
+              <>
+                { /* Filters */}
+                <form>
+                  <label>
+                    <input name='garden' id='active' type='radio' value='Active' checked={filters.garden === 'Active'} onChange={handleChange} />
+                    Active
+                  </label>
+                  <label>
+                    <input name='garden' id='garden' type='radio' value='Garden' checked={filters.garden === 'Garden'} onChange={handleChange} />
+                    Garden
+                  </label>
+                  <label>
+                    <input name='garden' id='both' type='radio' value='Both' checked={filters.garden === 'Both'} onChange={handleChange} />
+                    Both
+                  </label>
+                  <label>
+                    Search:
+                    <input name='search' id='search' type='search' value={filters.search} onChange={handleChange} />
+                  </label>
+                  <label>
+                    Happiness Min.:
+                    <input name='happiness_min' id='happiness_min' type='number' min='0' max='10' value={filters.happiness_min} onChange={handleChange} />
+                  </label>
+                  <label>
+                    Happiness Max.:
+                    <input name='happiness_max' id='happiness_max' type='number' min='0' max='10' value={filters.happiness_max} onChange={handleChange} />
+                  </label>
+                </form>
 
-            { /* Pets */}
-            <div>
-              {filteredPets?.map((pet, index) =>
-                <Link to={`/pets/${pet.id}`} key={index}>
-                  <div>
-                    <p>Name: {pet.name}</p>
-                    <p>Title: {pet.title}</p>
-                    <p>Description: {pet.description}</p>
-                    <p>Happiness: {pet.hp}</p>
-                  </div>
-                </Link>
+                { /* Pets */}
+                <div id='pets-list'>
+                  {filteredPets?.map((pet, index) =>
+                    <Link to={`/pets/${pet.id}`} key={index}>
+                      <div>
+                        <p>Name: {pet.name}</p>
+                        <p>Title: {pet.title}</p>
+                        <p>Description: {pet.description}</p>
+                        <p>Happiness: {pet.hp}</p>
+                      </div>
+                    </Link>
 
-              )}
-            </div>
+                  )}
+                </div>
+              </>
+              :
+              <p>No pets found.</p>
+            }
 
+            { /* Create Pets */}
             <div onClick={() => setCreatePet(true)}>Create new pet</div>
 
             {createPet &&

@@ -10,13 +10,13 @@ export default function Layout() {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (!import.meta.env.PROD) {
+        if (import.meta.env.DEV) {
             dispatch(getUserById(import.meta.env.VITE_USER_ID))
         } else {
             if (user.data)
                 dispatch(getUserById(user.data.id))
         }
-    }, [])
+    }, [user.data])
 
     return (
         <>
