@@ -673,8 +673,5 @@ DELETE /tasks/{taskId}
 
 ## Upcoming Features
 - Tasks
-  - 
 - Evolution
-  - Pets will have 4 different life stages (baby, child, teen, adult)
-  - When pets evolve into a new life stage, they will evolve into different species depending on current happiness level and number of tasks completed.
 - User Authentication
