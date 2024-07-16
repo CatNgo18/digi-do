@@ -1,4 +1,4 @@
-# Digi-Do
+# Digi-Do (ReadMe WIP)
 
 - Feed your virtual pet by completing your to do list
 - Created for LegalMation's Code Challenge
@@ -145,7 +145,7 @@
       </td>
     </tr>
     <tr>
-      <td>Tasks</td>
+      <td>Tasks (Upcoming)</td>
       <td>
       - Categorize tasks by assigning them to different pets</br>
       </td>
@@ -158,14 +158,6 @@
     </tr>
   </tbody>
 </table>
-
-### Walkthrough
-1. Create a pet
-2. Create a task
-3. Complete the task
-4. Release pet into the garden
-5. Go to the garden
-6. Release pet from the garden into the wild
 
 ## Database
 
@@ -258,19 +250,19 @@
     </tr>
     <tr></tr>
     <tr>
-      <td>evolve_day</td>
+      <td>evolve_day (Upcoming)</td>
       <td><code>DATE</code></td>
       <td><code>NOT NULL</code></td>
     </tr>
     <tr></tr>
     <tr>
-      <td>life_stage_id</td>
+      <td>life_stage_id (Upcoming)</td>
       <td><code>INT</code></td>
       <td><code>NOT NULL</code> <code>DEFAULT 0</code></td>
     </tr>
     <tr></tr>
     <tr>
-      <td>species_id</td>
+      <td>species_id (Upcoming)</td>
       <td><code>INT</code></td>
       <td><code>NOT NULL</code></td>
     </tr>
@@ -334,7 +326,7 @@
 <table>
   <thead>
     <tr>
-      <th colspan="3" align="left" width="1100">💾 digi_do.species</th>
+      <th colspan="3" align="left" width="1100">💾 digi_do.species (Upcoming)</th>
     </tr>
   </thead>
   <tbody>
@@ -398,7 +390,7 @@
 <table>
   <thead>
     <tr>
-      <th colspan="3" align="left" width="1100">💾 digi_do.life_stage</th>
+      <th colspan="3" align="left" width="1100">💾 digi_do.life_stage (Upcoming)</th>
     </tr>
   </thead>
   <tbody>
@@ -425,7 +417,7 @@
 <table>
   <thead>
     <tr>
-      <th colspan="3" align="left" width="1100">💾 digi_do.task</th>
+      <th colspan="3" align="left" width="1100">💾 digi_do.task (Upcoming)</th>
     </tr>
   </thead>
   <tbody>
@@ -496,6 +488,24 @@ Given a <code>userID</code>, return a user with detailed information.
 GET /users/{userId}
 ```
 ##### API
+<table>
+  <tbody>
+    <tr>
+      <th colspan="3" align="left">🔖&nbsp;&nbsp;Path</th>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th align="left">Name</th>
+      <th align="left">Type</th>
+      <th align="left">Description</th>
+    </tr>
+    <tr>
+      <td>userId</td>
+      <td><code>Long</code></td>
+      <td>User ID for users to search</td>
+    </tr>
+  </tbody>
+</table>
 
 #### User List Pets
 Given a <code>userID</code>, return a list of pets (and their non-detailed information) belonging to that user.
@@ -504,6 +514,24 @@ Given a <code>userID</code>, return a list of pets (and their non-detailed infor
 GET /users/{userId}/pets
 ```
 ##### API
+<table>
+  <tbody>
+    <tr>
+      <th colspan="3" align="left">🔖&nbsp;&nbsp;Path</th>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th align="left">Name</th>
+      <th align="left">Type</th>
+      <th align="left">Description</th>
+    </tr>
+    <tr>
+      <td>userId</td>
+      <td><code>Long</code></td>
+      <td>User ID for pets to search</td>
+    </tr>
+  </tbody>
+</table>
 
 #### User Create Pet
 Given a <code>userId</code>, create a pet belonging to that user.
@@ -512,6 +540,60 @@ Given a <code>userId</code>, create a pet belonging to that user.
 POST /users/{userId}/pets
 ```
 ##### API
+<table>
+  <tbody>
+    <tr>
+      <th colspan="3" align="left">🔖&nbsp;&nbsp;Path</th>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th align="left">Name</th>
+      <th align="left">Type</th>
+      <th align="left">Description</th>
+    </tr>
+    <tr>
+      <td>userId</td>
+      <td><code>Long</code></td>
+      <td>User ID to create a pet for</td>
+    </tr>
+    <tr><td colspan="3" ></td></tr>
+    <tr></tr>
+        <tr>
+      <th colspan="3" align="left" width="1100">📥&nbsp;&nbsp;Request</th>
+    </tr>
+    <tr></tr>
+    <tr>
+      <th colspan="2" align="left">Model </th>
+      <th align="left">Example </th>
+    </tr>
+    <tr>
+      <td colspan="2" align="left"><pre lang="yml">
+name: String
+title: String</pre></td>
+      <td align="left"><pre lang="json">
+{
+    "name": "Rocky",
+    "title": "CS 121 Project"
+    "description": "My project"
+}
+</pre></td>
+    <tr>
+      <th align="left">Key</th>
+      <th align="left">Required</th>
+      <th align="left">Description </th>
+    </tr>
+    <tr>
+      <td><code>name</code></td><td><code>No</code></td><td>Name for pet</td>
+    </tr>
+    <tr></tr>
+    <tr>
+      <td><code>title</code></td><td><code>No</code></td><td>Title for project the pet represents</td>
+    </tr>
+    <tr>
+      <td><code>description</code></td><td><code>No</code></td><td>Description for project the pet represents</td>
+    </tr>
+  </tbody>
+</table>
 
 ### Pets
 
@@ -559,7 +641,7 @@ DELETE /pets/{petId}
 Given their <code>petId</code>s, delete multiple pets from the <code>digi_do.pets</code> table.
 ##### Path
 ```http
-POST /pets/delete
+DELETE /pets
 ```
 ##### API
 
@@ -590,6 +672,8 @@ DELETE /tasks/{taskId}
 ##### API
 
 ## Upcoming Features
+- Tasks
+  - 
 - Evolution
   - Pets will have 4 different life stages (baby, child, teen, adult)
   - When pets evolve into a new life stage, they will evolve into different species depending on current happiness level and number of tasks completed.
