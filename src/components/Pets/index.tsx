@@ -22,7 +22,7 @@ export default function Pets() {
 
   const filteredPets = useMemo(() => pets.data?.filter((pet) => {
     // Check to see if pet fails any filters
-    for (let filter in filters) {
+    for (const filter in filters) {
       switch (filter) {
         case 'garden':
           // return false if pet.garden does not match filter

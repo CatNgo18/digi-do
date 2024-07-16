@@ -51,7 +51,7 @@ export default function PetForm({defaultValues, action, setFormVisible}: PetForm
             <label>Title: <input name="title" value={formData?.title} onChange={handleChange}/></label>
             <br/>
             <label>Description: <textarea name="description" value={formData?.description} onChange={handleChange}/></label>
-            
+            <br/>
             <button type='submit'>Submit</button>
             <button onClick={() => setFormVisible(false)}>Cancel</button>
         </form>

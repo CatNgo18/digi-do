@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks";
 import { getUserById } from "../../state/user/userSlice";
 import { Link, Outlet } from "react-router-dom";

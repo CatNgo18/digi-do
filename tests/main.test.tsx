@@ -1,6 +1,5 @@
-import React from 'react';
 import { expect, describe, afterEach, beforeEach, test } from 'vitest';
-import { cleanup, fireEvent, renderHook, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react';
 import Pet from '../src/pages/Pet';
 import { makeServer } from "../src/mirage";
 import { Server } from 'miragejs';

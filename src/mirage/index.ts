@@ -82,8 +82,6 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // User endpoints
 
-            this.get("users");
-
             // Given a userID, return a user
             this.get('/users/:userId', (schema: AppSchema, request: Request) => {
                 return schema.find("user", request.params.userId);
@@ -125,7 +123,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a petID, create a task belonging to that pet
             this.post('/pets/:petId/tasks', (schema: AppSchema, request: Request) => {
-                let attrs = JSON.parse(request.requestBody);
+                const attrs = JSON.parse(request.requestBody);
 
                 return schema.create("task", {
                     petId: request.params.petId,
@@ -135,7 +133,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a petID, update the pet's information
             this.put('/pets/:petId', (schema: AppSchema, request: Request) => {
-                let attrs = JSON.parse(request.requestBody);
+                const attrs = JSON.parse(request.requestBody);
 
                 schema.find("pet", request.params.petId)?.update(attrs);
 
@@ -144,9 +142,9 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a petID, delete the pet from the table
             this.del('/pets/:petId', (schema: AppSchema, request: Request) => {
-                let pet = schema.find("pet", request.params.petId);
+                const pet = schema.find("pet", request.params.petId);
 
-                /* @ts-ignore */
+                // @ts-ignore: Mirage will destroy tasks that have a relationship w/ the pet we found
                 pet?.tasks.destroy();
                 pet?.destroy();
 
@@ -155,12 +153,12 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given their petIDs, delete multiple pets from the table
             this.del('/pets', (schema: AppSchema, request: Request) => {
-                let petIds = JSON.parse(request.requestBody);
+                const petIds = JSON.parse(request.requestBody);
 
                 petIds.forEach((petId: number) => {
-                    let pet = schema.find("pet", `${petId}`);
+                    const pet = schema.find("pet", `${petId}`);
 
-                    /* @ts-ignore */
+                    // @ts-ignore: Mirage will destroy tasks that have a relationship w/ the pet we found 
                     pet?.tasks.destroy();
                     pet?.destroy();
                 });
@@ -178,7 +176,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a taskID, update the task's information
             this.put('/tasks/:taskId', (schema: AppSchema, request: Request) => {
-                let attrs = JSON.parse(request.requestBody).task;
+                const attrs = JSON.parse(request.requestBody).task;
 
                 schema.find("task", request.params.taskId)?.update(attrs);
 
@@ -187,7 +185,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
             // Given a taskID, delete the task from the table
             this.del('/tasks/:taskId', (schema: AppSchema, request: Request) => {
-                let task = schema.find("pet", request.params.taskId);
+                const task = schema.find("pet", request.params.taskId);
 
                 task?.destroy();
 
@@ -197,7 +195,7 @@ export function makeServer({ environment = "test" }) { // expected environment v
 
         seeds(server) {
             // Create 6 pets
-            let pets = server.createList("pet", 6);
+            const pets = server.createList("pet", 6);
 
             // Create 2 tasks for each pet
             pets.forEach((pet) => {
