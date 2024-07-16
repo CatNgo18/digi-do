@@ -45,41 +45,45 @@
 5. Run ```npm run dev```
 
 ## Code Challenge Requirements
+### API Requirements:
+- One resource has at least one relationship
+  - A user has 0+ pets
+  - A pet has 1 user
+  - A pet has 0+ tasks
+  - A task has 1 pet
+- Resources have at least two attributes
+  - See [Database](#database)
+
+### Application Setup Requirements:
+- [x] Vite.js
+- [x] Vitest
+- [x] Redux Toolkit
+- [x] Mirage
+- [x] ReactJS
+
+### User Requirements:
 1. User can view a list of resources
-```
-- User can view list of pets
-- User can view list of tasks
-```
+    - User can view list of pets
+
 2. User can filter the list of resources by at least one attribute
-```
-- User can filter pets by:
-  - name/title/description containing string
-  - garden/active (not in garden)
-  - happy/unhappy
-- User can filter tasks by:
-  - complete/incomplete
-  - due date
-```
+    - User can filter pets by:
+      - name/title/description containing string
+      - garden/active (not in garden)
+      - happiness points within range
+
 3. User can click a resource in the list to view the resource details
-```
-- User can click on a pet to view pet details
-- User can click on a task to view task details
-```
+    - User can click on a pet to view pet details
+
 4. User can create a new resource
-```
-- User can create pets
-- User can create tasks
-```
+    - User can create pets
+
 5. User can modify the resource details
-```
-- User can modify pet name, title, and description
-- User can modify task title, description, and due date
-```
+    - User can modify pet name, title, and description
+    - User can move pet into the garden and add a retrospection
+
 6. User can delete the resource
-```
-- User can delete pets
-- User can delete tasks
-```
+    - User can delete pets
+
 
 ## Tutorial
 
