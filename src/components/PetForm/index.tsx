@@ -22,6 +22,8 @@ export default function PetForm({defaultValues, action, setFormVisible}: PetForm
 
     const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        // handle submit based on desired action
         if (action === 'update') {
             await dispatch(updatePet(Object.assign({}, defaultValues, formData)));
         } else if (action === 'create') {
@@ -32,15 +34,15 @@ export default function PetForm({defaultValues, action, setFormVisible}: PetForm
             }
         }
         
-
+        // after submitting to server, retrieve list of pets
         if (user.data?.id) {
             await dispatch(getPetsByUserId(user.data.id));
             setFormVisible(false);
         } else {
             if (user.errorMessage)
-                console.log(user.errorMessage)
+                console.log(user.errorMessage);
             if (pets.errorMessage)
-                console.log(pets.errorMessage)
+                console.log(pets.errorMessage);
         }
     }
 

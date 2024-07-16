@@ -23,10 +23,13 @@ export default function Pet() {
         }
     }
 
+    // Move Pet into Garden
     const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
         event.preventDefault();
+
         const elements = new FormData(event.currentTarget);
         const retro = elements.get('retro');
+
         await dispatch(updatePet(Object.assign({}, pet.data, { garden: true, retro })))
 
         if (user.data?.id) {
@@ -42,12 +45,13 @@ export default function Pet() {
 
     const PetBody = () => {
         switch (pet.status) {
-            case 'loading':
+            case 'loading': // Getting pet data from db
                 return <p>Loading pet...</p>
-            case 'finished':
-                if (!editPet && pet.data) {
+            case 'finished': // Successfully retrieved pet data from db
+                if (!editPet && pet.data) { // default
                     return (
                         <div>
+                            {/* Data */}
                             <p>Name: {pet.data.name ?? ''}</p>
                             <p>Title: {pet.data.title}</p>
                             <p>Description: {pet.data.description ?? ''}</p>
@@ -60,6 +64,8 @@ export default function Pet() {
                             :
                                 <p>(Active Pet)</p>
                             }
+
+                            {/* Action Buttons */}
                             <Link to='/'><button>Return to Pets List</button></Link>
                             {!pet.data.garden &&
                                 <>
@@ -70,7 +76,7 @@ export default function Pet() {
                             <button onClick={() => handleDeletePet()}>Delete Pet</button>
                         </div>
                     )
-                } else if (editPet) {
+                } else if (editPet) { // editing pet
                     return <PetForm
                         setFormVisible={setEditPet}
                         action='update'
@@ -80,7 +86,7 @@ export default function Pet() {
                     console.log(pet.errorMessage);
                     return <p>Cannot find pet.</p>
                 }
-            case 'error':
+            case 'error': // Couldn't retrieve pet data from db
                 console.log(pet.errorMessage);
                 return <p>Cannot find pet.</p>
         }
@@ -88,6 +94,7 @@ export default function Pet() {
 
     return (
         <>
+            {/* Moving Pet to Garden */}
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
