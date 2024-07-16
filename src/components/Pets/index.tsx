@@ -117,7 +117,12 @@ export default function Pets() {
                         <p>Name: {pet.name}</p>
                         <p>Title: {pet.title}</p>
                         <p>Description: {pet.description}</p>
-                        <p>Happiness: {pet.hp}</p>
+                        <p>Happiness: {pet.hp}/10</p>
+                        {pet.garden ? 
+                          <p>Garden</p>
+                        : 
+                          <p>Active</p>
+                        }
                       </div>
                     </Link>
 
