@@ -589,6 +589,7 @@ title: String</pre></td>
     <tr>
       <td><code>title</code></td><td><code>No</code></td><td>Title for project the pet represents</td>
     </tr>
+    <tr></tr>
     <tr>
       <td><code>description</code></td><td><code>No</code></td><td>Description for project the pet represents</td>
     </tr>
