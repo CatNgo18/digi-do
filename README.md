@@ -1,4 +1,4 @@
-# Digi-Do (ReadMe WIP)
+# Digi-Do (WIP)
 
 - Feed your virtual pet by completing your to do list
 - Created for LegalMation's Code Challenge
